@@ -42,7 +42,7 @@ public interface NetherBehaviour {
         }
 
 
-        public int attemptUseCharge(NetherSpeader.ChargeCursor p_222054_, LevelAccessor p_222055_, BlockPos p_222056_, RandomSource p_222057_, NetherSpeader p_222058_, boolean p_222059_) {
+        public int attemptUseCharge(NetherSpreaderUtil.ChargeCursor p_222054_, LevelAccessor p_222055_, BlockPos p_222056_, RandomSource p_222057_, NetherSpreaderUtil p_222058_, boolean p_222059_) {
             return p_222054_.getCharge();
         }
 
@@ -170,5 +170,5 @@ public interface NetherBehaviour {
         return 1;
     }
 
-    int attemptUseCharge(NetherSpeader.ChargeCursor p_222039_, LevelAccessor p_222040_, BlockPos p_222041_, RandomSource p_222042_, NetherSpeader p_222043_, boolean p_222044_);
+    int attemptUseCharge(NetherSpreaderUtil.ChargeCursor p_222039_, LevelAccessor p_222040_, BlockPos p_222041_, RandomSource p_222042_, NetherSpreaderUtil p_222043_, boolean p_222044_);
 }

@@ -1,11 +1,10 @@
 package baguchan.nether_invader;
 
-import baguchan.nether_invader.registry.ModBlockEntitys;
-import baguchan.nether_invader.registry.ModBlocks;
-import baguchan.nether_invader.registry.ModItems;
+import baguchan.nether_invader.region.OverworldNetherRegion;
+import baguchan.nether_invader.registry.*;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.PathPackResources;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraftforge.common.MinecraftForge;
@@ -17,6 +16,9 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.resource.PathPackResources;
+import terrablender.api.Regions;
+import terrablender.api.SurfaceRuleManager;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(NetherInvader.MODID)
@@ -36,6 +38,7 @@ public class NetherInvader
 
         ModBlocks.BLOCKS.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
+        ModEntitys.ENTITIES_REGISTRY.register(modEventBus);
         ModBlockEntitys.BLOCK_ENTITIES.register(modEventBus);
 
         // Register ourselves for server and other game events we are interested in
@@ -45,6 +48,16 @@ public class NetherInvader
 
     private void commonSetup(final FMLCommonSetupEvent event)
     {
+        event.enqueueWork(() ->
+        {
+            if (NetherConfigs.COMMON.nether_spawn_in_overworld.get()) {
+                // Weights are kept intentionally low as we add minimal biomes
+                Regions.register(new OverworldNetherRegion(new ResourceLocation(MODID, "overworld_nether"), 3));
+
+                // Register our surface rules
+                SurfaceRuleManager.addSurfaceRules(SurfaceRuleManager.RuleCategory.OVERWORLD, MODID, ModSurfaceRuleData.makeRules());
+            }
+        });
     }
 
     public void addPiglinInvaderDatapack(AddPackFindersEvent event) {
@@ -56,18 +69,11 @@ public class NetherInvader
 
             event.addRepositorySource(packConsumer -> packConsumer.accept(pack));
         }*/
-
         if (event.getPackType() == PackType.SERVER_DATA) {
             var resourcePath = ModList.get().getModFileById(MODID).getFile().findResource("nether_reactor");
-            var supplier = new PathPackResources.PathResourcesSupplier(resourcePath, true);
-
-            var pack = createBuiltinPack("builtin/nether_reactor", supplier, Component.literal("Enable Nether Reactor Recipe"));
-
+            var pack = Pack.readMetaAndCreate("builtin/nether_reactor", Component.literal("Enable Nether Reactor Recipe"), NetherConfigs.COMMON.enable_nether_invader_feature_default.get(),
+                    name -> new PathPackResources(name, true, resourcePath), PackType.SERVER_DATA, Pack.Position.TOP, PackSource.FEATURE);
             event.addRepositorySource(packConsumer -> packConsumer.accept(pack));
         }
-    }
-
-    protected Pack createBuiltinPack(String p_250596_, Pack.ResourcesSupplier p_249625_, Component p_249043_) {
-        return Pack.readMetaAndCreate(p_250596_, p_249043_, NetherConfigs.COMMON.enable_nether_invader_feature_default.get(), p_249625_, PackType.SERVER_DATA, Pack.Position.TOP, PackSource.FEATURE);
     }
 }

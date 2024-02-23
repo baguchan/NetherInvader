@@ -3,7 +3,7 @@ package baguchan.nether_invader.blockentity;
 import baguchan.nether_invader.NetherConfigs;
 import baguchan.nether_invader.block.NetherReactorBlock;
 import baguchan.nether_invader.registry.ModBlockEntitys;
-import baguchan.nether_invader.utils.NetherSpeader;
+import baguchan.nether_invader.utils.NetherSpreaderUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -31,7 +31,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import java.util.List;
 
 public class NetherReactorBlockEntity extends BlockEntity {
-    private final NetherSpeader netherSpreader = NetherSpeader.createLevelSpreader();
+    private final NetherSpreaderUtil netherSpreader = NetherSpreaderUtil.createLevelSpreader();
 
     private int tick;
     private boolean active;
